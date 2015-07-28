@@ -11,28 +11,18 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	BTree bt(argv[1]);
-	//bt.printTree();
-	//bt.reset(argv[1]);
-
 	
 	string action;
 	fstream infile(argv[2], ios::in);
 	while(!infile.eof())
 	{
 		infile >> action;
-		//cout << "action = " << action << endl;
 		if(action == "I")
 		{
-			//string dumb;
-			//infile >> dumb;
-			//cout << "dumb" << dumb << endl;
 			Album a;
 			Album b;
 			infile >> a;
 			infile >> b;
-			//cout << "Album" << a << endl;
-			//cout << "Album2" << b << endl;
-			//cout << "Inserting " << b << endl;
 			bt.insert(b);
 		}
 		else if(action == "S")
@@ -47,7 +37,6 @@ int main(int argc, char* argv[])
 	cout << "Reads " << bt.read << endl;
 	cout << "Writes " << bt.write << endl;
 	
-	//bt.printTree();
 	bt.close();
 
 }

@@ -3,27 +3,15 @@
 
 bool operator < (const Album& a, const Album& b)
 {
-	//cout <<  "Album StrComp < " << (strcmp(a.UPC, b.UPC) < 0) <<endl;
 	return (strcmp(a.UPC, b.UPC) < 0);
 
 }
 
 bool operator == (const Album& a, const Album& b)
 {
-	//cout <<  "Album StrComp < " << (strcmp(a.UPC, b.UPC) < 0) <<endl;
 	return (strcmp(a.UPC, b.UPC) == 0) && (strcmp(a.Title, b.Title)  == 0) && (strcmp(a.Artist, b.Artist) == 0)  ;
 
 }
-
-//, const Album& b
-/*
-bool Album::operator > (const Album& a)
-{
-	cout <<  "Album StrComp >" << (strcmp(a.UPC, UPC) < 0) <<endl;
-	return (strcmp(UPC, a.UPC) < 0);
-
-}
-*/
 
 istream & operator >> (istream & stream, Album & C)
 {

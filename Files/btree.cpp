@@ -1,29 +1,15 @@
 #include "btree.h"
 
-BTree::BTree()
-{
-	//cout << "init" << endl;
-	//root = NULL;
-	//rootAddr = NULL;
-
-}
+BTree::BTree(){}
 
 BTree::BTree(char * filename)
 {
-	//cout << "init" << endl;
-	//root = NULL;
-	//rootAddr = NULL;
 	strcpy (treeFileName, filename);
 	treeFile.open(filename, ios::binary | ios::in | ios::out);
 
 	BTNode header = getNode(0);
 	rootAddr = header.child[0]; 
 	root = getNode(rootAddr);
-
-	//printContents(header);
-	//printContents(root);
-	//cout << "root is at " << rootAddr << endl;
-
 	read = write = 0;
 
 }
@@ -38,9 +24,6 @@ void BTree::reset (char * filename)
 	treeFile.open(treeFileName, ios::binary | ios::out);
    	treeFile.close();
    	treeFile.open(treeFileName, ios::binary | ios::in | ios::out);
-
-   	//writeHeader(filename);
-
    	BTNode header;
    	writeNode(0, header);
 
@@ -88,18 +71,11 @@ void BTree::writeNode(int recAddr, BTNode t)
 
 
 void BTree::writeHeader (char* filename)
-{
-	
+{	
 	BTNode node;
 	node.currSize = 0;
 	node.child[0] = 0;
 	writeNode(0, node);
-
-	//String key = "123456";
-	//String name = "ABCDEFGHIJK";
-	//String other = "',.pyfoeuk;q";
-	//Album a(key,name,other);
-	//printNode(0);
 } 
 
 bool BTree::isLeaf(BTNode t)
@@ -108,11 +84,9 @@ bool BTree::isLeaf(BTNode t)
 	{
 		if(t.child[x] != -1)
 		{
-			//cout << t.child[x] << " - ";
 			return false;
 		}
 	}
-	//cout << "nope12345 " << endl;
 	
 	return true;
 }
@@ -120,26 +94,16 @@ bool BTree::isLeaf(BTNode t)
 void BTree::placeInNode (Pair newP, int currAddr)
 {
 	BTNode t = getNode(currAddr);
-	
-	//cout << "rootAddr = " << rootAddr << endl;
-	//cout << "Placing in Node with contents from adress " << currAddr << endl;
-	//printContents(t);
-	
 
 	set<Pair> st;
 	set<Pair>::iterator itt;
 
 	st = createSet(t, newP);
-	//printSet(st);
 
 	wipeNode(t);
-	
-	//wipe node
-
 
 	if(st.size()>ORDER-1)
 	{
-		//cout << endl << "Time To Split" <<endl;
 		set<Pair> lSet;
 		set<Pair> rSet;
 		BTNode leftSide;
@@ -155,19 +119,14 @@ void BTree::placeInNode (Pair newP, int currAddr)
 			Pair curr = *itt;
 			if(count<half)
 			{
-				//cout << " < " << curr.element << endl;
-				//AddElementAtNextPosition(curr, &leftSide);
 				lSet.insert(curr);
 			}
 			else if (count>half)
 			{
-				//cout << " > " << curr.element << endl;
-				//AddElementAtNextPosition(curr, &rightSide);
 				rSet.insert(curr);
 			}
 			else
 			{
-				//cout << " = " << curr.element << endl;
 				moveUp = curr;
 			}
 
@@ -181,34 +140,16 @@ void BTree::placeInNode (Pair newP, int currAddr)
 		BTNode d;
 		wipeNode(d);
 		writeNode(currAddr, d);
-		
-		//cout << "this node at "<< currAddr << " should be blank " << d.currSize << endl;
-		//printContents(d);
-		//cout << endl;
 
 		cout << "Split! Node elevated: " << moveUp.element << endl; 
-		//cout << "<<<<LEFT<<<<" << endl;
-		//printContents(leftSide);
 		treeFile.seekp(0, ios::end);
 		moveUp.loffset = treeFile.tellp();
 		writeNode(treeFile.tellp(), leftSide);
 
-		/*
-		BTNode test = getNode(moveUp.loffset);
-		cout << "Left Offset is " << moveUp.loffset <<endl;
-		printContents(test);
-		*/
-
-		//cout << ">>>>Right>>>" << endl;
-		//printContents(rightSide);
 		treeFile.seekp(0, ios::end);
 		moveUp.roffset = treeFile.tellp();
 		writeNode(treeFile.tellp(),rightSide);
 
-		//cout << "New Node Adresses are [" << moveUp.loffset << "," << moveUp.roffset << "]" << endl;
-
-
-		//cout << moveUp.element << endl << moveUp.loffset << " " << moveUp.roffset << endl;
 		if(currAddr == rootAddr)
 		{
 			
@@ -216,7 +157,6 @@ void BTree::placeInNode (Pair newP, int currAddr)
 			wipeNode(newRoot);
 			treeFile.seekp(0, ios::end);
 			rootAddr = treeFile.tellp();
-			//cout << "New Root At " << rootAddr << endl;
 			writeNode(treeFile.tellp(),newRoot);
 			placeInNode (moveUp, rootAddr);
 
@@ -224,37 +164,15 @@ void BTree::placeInNode (Pair newP, int currAddr)
 		else
 		{
 			int newaddress = findTheAdressOfWhereTheNewKeyShouldBePut(moveUp.element, rootAddr);
-			//cout << "Adding Element to node At " << newaddress << endl;
 			placeInNode (moveUp, newaddress);
 			return;
 		}
 	}
 	else
 	{
-		/*
-		int count = 0;
-		for(itt = st.begin(); itt!= st.end(); itt++)
-		{
-			Pair curr = *itt;
-			AddElementAtNextPosition(curr, &t);
-
-			printContents(t);
-			count ++;
-		}
-		*/
 
 		AddSetPlusNewElementToNode(st, newP, t);
-
-		//cout << "----Node Before Write-----" << endl;
-		//printContents(t);
-		//cout << "--------------------------" << endl;
-
 		writeNode(currAddr, t);
-
-
-		//cout << "----Node After Write-----" << endl;
-		//printContents(t);
-		//cout << "------------------------" << endl;
 	}
 
 }
@@ -276,10 +194,8 @@ set<Pair> BTree::createSet(BTNode t, Pair newP)
 
 void BTree::AddElementAtNextPosition(Pair curr, BTNode *t)
 {
-	//cout << endl << curr.element << endl;
 	for(int x = 0; x<t->currSize; x++)
 	{
-		//cout << "[" << (t->contents[x]).getUPC() << "]" << endl;
 		if((t->contents[x]).getUPC().empty())
 		{
 			t->contents[x] = curr.element;
@@ -304,13 +220,11 @@ void BTree::AddSetPlusNewElementToNode(set<Pair> st, Pair newPair, BTNode& t)
 	Pair curr;
 	for(itt = st.begin(); itt!= st.end(); itt++)
 	{
-		//cout << "index is " << index << endl;
 		curr = *itt;
 		t.currSize += 1;
 		if(curr.element == newPair.element)
 		{
 			newPairAddr = index;
-			//cout << "newPairAddr = " << newPairAddr << endl ;
 			index ++;
 			continue;
 
@@ -318,37 +232,29 @@ void BTree::AddSetPlusNewElementToNode(set<Pair> st, Pair newPair, BTNode& t)
 		t.contents[index] = curr.element;
 		t.child[index] = curr.loffset;
 		index ++;
-		//printContents(t);
 	}
-	//cout << "Final Index is " << index << endl;
 	if(!(curr.element == newPair.element))
 		t.child[index] = curr.roffset;
-	//printContents(t);
 	if(newPairAddr == -1)
 	{
-		//cout << "no new pair" << endl;
 		return;
 	}
 	else
 	{
-		//cout << "adding new pair element into node" << endl; 
 		t.child[newPairAddr] = newPair.loffset;
 		t.child[newPairAddr+1] = newPair.roffset;
 		t.contents[newPairAddr] = newPair.element;
 	}
-	//printContents(t);
 
 }
 
 bool BTree::search (string key)
 {
-	//cout << "search " << key <<endl;
 	return search(key, rootAddr);
 }
 
 bool BTree::search (string key, int address)
 {
-	//cout << "Search Key " << key << " at address " << address << endl;
 	BTNode t = getNode(address);
 	int currentSize = t.currSize;
 	if(currentSize < 1)
@@ -359,7 +265,6 @@ bool BTree::search (string key, int address)
 
 	for(int x = 0; x<currentSize; x++)
 	{
-		//cout << key.getUPC() << " <" << t.contents[x].getUPC() << endl;
 		if(key == t.contents[x].getUPC())
 		{
 			cout << t.contents[x] << endl;
@@ -380,9 +285,6 @@ bool BTree::search (string key, int address)
 	}
 
 	return search(key, t.child[currentSize]);
-
-
-	//return address;
 }
 
 
@@ -397,11 +299,9 @@ int BTree::findTheAdressOfWhereTheNewKeyShouldBePut(keyType key, int address)
 
 	if(!isLeaf(t))
 	{
-		//cout << "not leaf" <<endl;
 		bool foundIt = false;
 		for(int x = 0; x<currentSize; x++)
 		{
-			//cout << key.getUPC() << " <" << t.contents[x].getUPC() << endl;
 			if(key < t.contents[x])	
 			{
 				nextAddr = findTheAdressOfWhereTheNewKeyShouldBePut(key, t.child[x]);
@@ -420,15 +320,8 @@ void BTree::insert (keyType key)
 {
 	cout << "Insert " << key << endl;
 
-	//cout << "----Root-----" << endl;
-	//printContents(root);
-	//cout << "-------------" << endl;
-	
-	//cout << "here" <<endl;
-	//cout << "CurrentNdde Size" << currentNode->currSize <<endl;
 	if(root.currSize == 0)
 	{
-		//cout << "Root is 0 adding element" << endl;
 		root.currSize = 1;
 		root.contents[0] = key;
 		root.child[0] = root.child[1] = -1;
@@ -438,10 +331,8 @@ void BTree::insert (keyType key)
 	}
 
 	int currAddr = findTheAdressOfWhereTheNewKeyShouldBePut(key, rootAddr);
-	//cout << " insert adress @ - " << currAddr << endl;
 	Pair newP = {key,-1,-1};
 	placeInNode(newP, currAddr);
-	//cout << "rootAddr = " << rootAddr <<endl;
 
 }
 
@@ -553,10 +444,7 @@ void BTree::close ()
 {
 	BTNode header;
 	wipeNode(header);
-	//cout << "Final Saved Root Addr =" << rootAddr << endl;
 	header.child[0] = rootAddr;
 	writeNode(0, header);
-	//printContents(header);
-
 	treeFile.close();
 }
