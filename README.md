@@ -6,17 +6,19 @@ Two pragrams are included:
 
 Creates and updates a BTree of albulms.
 
-It was created on using a command line compiler.  To compile run a:
+It was created on using a command line compiler.  To compile run:
+```
 c++ -c album.cpp
 c++ -c btree.cpp
 c++ createBT.cpp album.o btree.o
 c++ updateBT.cpp album.o btree.o
+```
 
 To run the CreateBT Program use:
 
 `./a.out [Database Binary File] [Input File]`
 
-##Example CreateBT Run
+###Example CreateBT Run
 ```
 [user@location]$ ./a.out binaryfile.dat TestFiles/album.med
 Insert 08722|Counting Crows|This Desert Life|
