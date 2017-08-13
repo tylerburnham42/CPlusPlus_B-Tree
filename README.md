@@ -1,4 +1,4 @@
-# CPlusPlus_B-Tree
+# C++ Album B-Tree
 This program is a c++ program that reads in a series of albulms and stores it in a binary file as a B-Tree.
 Two pragrams are included:
 - createBT.cpp - Creates a btree from an albulm file
